@@ -1,0 +1,5 @@
+version = 0.29.0
+profile = janestreet
+exp-grouping = preserve
+sequence-blank-line = preserve-one
+if-then-else = vertical

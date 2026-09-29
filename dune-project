@@ -9,6 +9,10 @@
 
 (authors "Mukesh <mukesh@0xc84.fyi>")
 
+(maintainers "Mukesh <mukesh@0xc84.fyi>")
+
+(license "MIT")
+
 (package
  (name euler)
  (synopsis "Project Euler solutions in OCaml")
@@ -16,6 +20,7 @@
  (depends
   ocaml
   ocaml-lsp-server
-  ocamlformat)
+  ocamlformat
+  utop)
  (tags
   ("project-euler")))

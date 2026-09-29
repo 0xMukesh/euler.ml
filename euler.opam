@@ -2,7 +2,9 @@
 opam-version: "2.0"
 synopsis: "Project Euler solutions in OCaml"
 description: "Project Euler solutions in OCaml"
+maintainer: ["Mukesh <mukesh@0xc84.fyi>"]
 authors: ["Mukesh <mukesh@0xc84.fyi>"]
+license: "MIT"
 tags: ["project-euler"]
 homepage: "https://github.com/0xmukesh/euler.ml"
 bug-reports: "https://github.com/0xmukesh/euler.ml/issues"
@@ -11,6 +13,7 @@ depends: [
   "ocaml"
   "ocaml-lsp-server"
   "ocamlformat"
+  "utop"
   "odoc" {with-doc}
 ]
 build: [

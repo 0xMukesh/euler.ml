@@ -1,1 +1,1 @@
-let () = print_endline "Hello, World!"
+let () = Utils.print_int (Solutions.p_007 10_001)
