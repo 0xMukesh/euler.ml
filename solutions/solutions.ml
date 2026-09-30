@@ -401,3 +401,43 @@ let p_017 end_num =
   in
   count 1 end_num 0
 ;;
+
+let p_018 filename =
+  let lines = In_channel.with_open_text filename In_channel.input_lines in
+  let transform_line line =
+    line |> String.split_on_char ' ' |> List.map int_of_string |> Array.of_list
+  in
+  let triangle = lines |> List.map transform_line |> Array.of_list in
+
+  let n = Array.length triangle in
+  (* cache matrix stores the best path sum starting from (i, j) *)
+  let cache = Array.make_matrix n n None in
+
+  let rec max_path i j =
+    match cache.(i).(j) with
+    | Some result -> result
+    | None -> begin
+      let result =
+        if i = n - 1 then
+          triangle.(i).(j)
+        else begin
+          let left = max_path (i + 1) j in
+          let right = max_path (i + 1) (j + 1) in
+
+          triangle.(i).(j) + max left right
+        end
+      in
+
+      cache.(i).(j) <- Some result;
+      result
+      end
+  in
+
+  if n = 0 then
+    0
+  else
+    max_path 0 0
+;;
+
+(* the solution for #67 and #18 are the exact same *)
+let p_067 = p_018

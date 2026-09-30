@@ -1,1 +1,1 @@
-let () = Utils.print_int (Solutions.p_017 1000)
+let () = Utils.print_int (Solutions.p_018 "./_data/067.txt")
