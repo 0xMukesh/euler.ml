@@ -21,6 +21,7 @@
   ocaml
   ocaml-lsp-server
   ocamlformat
-  utop)
+  utop
+  zarith)
  (tags
   ("project-euler")))

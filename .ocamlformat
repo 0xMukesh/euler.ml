@@ -3,4 +3,4 @@ profile = janestreet
 exp-grouping = preserve
 sequence-blank-line = preserve-one
 if-then-else = vertical
-parens-tuple=always
+parens-tuple = always

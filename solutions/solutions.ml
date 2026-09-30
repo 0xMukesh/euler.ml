@@ -1,30 +1,30 @@
 let p_001 () =
-  let rec aux curr ~accum ~limit =
+  let rec aux curr accum limit =
     match curr with
     | _ when curr >= limit -> accum
     | _ ->
       if curr mod 3 = 0 || curr mod 5 = 0 then
-        aux (curr + 1) ~accum:(accum + curr) ~limit
+        aux (curr + 1) (accum + curr) limit
       else
-        aux (curr + 1) ~accum ~limit
+        aux (curr + 1) accum limit
   in
 
-  aux 1 ~accum:0 ~limit:1000
+  aux 1 0 1000
 ;;
 
 let p_002 () =
-  let rec aux a b ~accum ~limit =
+  let rec aux a b accum limit =
     let next = a + b in
     match next with
     | _ when next >= limit -> accum
     | _ ->
       if next mod 2 = 0 then
-        aux b next ~accum:(accum + next) ~limit
+        aux b next (accum + next) limit
       else
-        aux b next ~accum ~limit
+        aux b next accum limit
   in
 
-  aux 1 1 ~accum:0 ~limit:4_000_000
+  aux 1 1 0 4_000_000
 ;;
 
 let p_003 num =
@@ -259,4 +259,59 @@ let p_012 num_divisors =
   in
 
   search 1
+;;
+
+let p_013 filename =
+  let open Z in
+  let nums = In_channel.with_open_text filename In_channel.input_lines in
+  let sum = List.fold_left (fun total num -> total + Z.of_string num) Z.zero nums in
+  let result = Z.to_string sum |> fun s -> String.sub s 0 10 in
+  result
+;;
+
+let p_014 () =
+  let limit = 1_000_000 in
+
+  let rec calc_chain_length num accum =
+    if num = 1 then
+      accum
+    else
+      begin if
+        num mod 2 = 0
+      then
+        calc_chain_length (num / 2) (accum + 1)
+      else
+        calc_chain_length ((3 * num) + 1) (accum + 1)
+      end
+  in
+
+  let rec search num max_length max_num =
+    if num >= limit then
+      max_num
+    else begin
+      let chain_length = calc_chain_length num 1 in
+      if chain_length > max_length then
+        search (num + 1) chain_length num
+      else
+        search (num + 1) max_length max_num
+    end
+  in
+
+  search 1 0 0
+;;
+
+(*
+  every route consists of N right moves and N down moves.
+  therefore, total number of possible routes = 2n_C_n = (2n!)/(n! * n!)
+*)
+let p_015 n =
+  let rec fact n prod =
+    if n = Z.one then
+      prod
+    else
+      fact (Z.sub n Z.one) (Z.mul prod n)
+  in
+  let fact_n = fact (Z.of_int n) Z.one in
+  let fact_2n = fact (Z.of_int (2 * n)) Z.one in
+  Z.div fact_2n (Z.mul fact_n fact_n) |> Z.to_string
 ;;

@@ -1,1 +1,1 @@
-let () = Utils.print_int (Solutions.p_012 500)
+let () = print_endline (Solutions.p_015 20)
