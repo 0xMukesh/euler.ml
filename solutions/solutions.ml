@@ -120,7 +120,8 @@ let p_008 filename window_size =
   in
 
   let product_of_digits s =
-    String.fold_left (fun product c -> product * (Char.code c - Char.code '0')) 1 s
+    let accum product c = product * (Char.code c - Char.code '0') in
+    String.fold_left accum 1 s
   in
 
   let rec search position max_prod max_chunk =
@@ -211,17 +212,14 @@ let p_011 filename =
   in
 
   let rec search (i, j) best_prod best_info =
-    let best_prod, best_info =
-      List.fold_left
-        (fun (curr_max, curr_info) direction ->
-           let prod = product_at i j direction in
-           if prod > curr_max then
-             (prod, Some ((i, j), direction))
-           else
-             (curr_max, curr_info))
-        (best_prod, best_info)
-        directions
+    let accum (curr_max, curr_info) direction =
+      let prod = product_at i j direction in
+      if prod > curr_max then
+        (prod, Some ((i, j), direction))
+      else
+        (curr_max, curr_info)
     in
+    let best_prod, best_info = List.fold_left accum (best_prod, best_info) directions in
 
     match advance (i, j) with
     | None -> (best_prod, best_info)
@@ -262,9 +260,9 @@ let p_012 num_divisors =
 ;;
 
 let p_013 filename =
-  let open Z in
   let nums = In_channel.with_open_text filename In_channel.input_lines in
-  let sum = List.fold_left (fun total num -> total + Z.of_string num) Z.zero nums in
+  let accum total num = Z.add total (Z.of_string num) in
+  let sum = List.fold_left accum Z.zero nums in
   let result = Z.to_string sum |> fun s -> String.sub s 0 10 in
   result
 ;;
@@ -314,4 +312,33 @@ let p_015 n =
   let fact_n = fact (Z.of_int n) Z.one in
   let fact_2n = fact (Z.of_int (2 * n)) Z.one in
   Z.div fact_2n (Z.mul fact_n fact_n) |> Z.to_string
+;;
+
+let p_016 () =
+  let desired_power = 1000 in
+  let known_power = 15 in
+  let two_power_fifteen = 32768 in
+
+  let quotient = desired_power / known_power in
+  let reminder = desired_power mod known_power in
+
+  let rec pow num n prod =
+    if n = Z.zero then
+      prod
+    else
+      pow num (Z.sub n Z.one) (Z.mul prod num)
+  in
+
+  let quotient_part = pow (Z.of_int two_power_fifteen) (Z.of_int quotient) Z.one in
+  let reminder_part = pow (Z.of_int 2) (Z.of_int reminder) Z.one in
+  let result = Z.mul quotient_part reminder_part in
+
+  let sum_of_digits =
+    Z.to_string result
+    |> String.to_seq
+    |> Seq.map (fun c -> Char.code c - Char.code '0')
+    |> Seq.fold_left ( + ) 0
+  in
+
+  sum_of_digits
 ;;
