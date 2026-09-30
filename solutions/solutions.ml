@@ -342,3 +342,62 @@ let p_016 () =
 
   sum_of_digits
 ;;
+
+(* spaces and hyphens are ignored *)
+let p_017 end_num =
+  let rec to_string n =
+    match n with
+    | 1 -> "one"
+    | 2 -> "two"
+    | 3 -> "three"
+    | 4 -> "four"
+    | 5 -> "five"
+    | 6 -> "six"
+    | 7 -> "seven"
+    | 8 -> "eight"
+    | 9 -> "nine"
+    | 10 -> "ten"
+    | 11 -> "eleven"
+    | 12 -> "twelve"
+    | 13 -> "thirteen"
+    | 14 -> "fourteen"
+    | 15 -> "fifteen"
+    | 16 -> "sixteen"
+    | 17 -> "seventeen"
+    | 18 -> "eighteen"
+    | 19 -> "nineteen"
+    | 20 -> "twenty"
+    | 30 -> "thirty"
+    | 40 -> "forty"
+    | 50 -> "fifty"
+    | 60 -> "sixty"
+    | 70 -> "seventy"
+    | 80 -> "eighty"
+    | 90 -> "ninety"
+    | 100 -> "onehundred"
+    | 1000 -> "onethousand"
+    | _ when n < 100 ->
+      let tens = n / 10 * 10 in
+      let ones = n mod 10 in
+      to_string tens ^ to_string ones
+    | _ when n < 1000 ->
+      let hundreds = n / 100 * 100 in
+      let remainder = n - hundreds in
+      let num_str = to_string (hundreds / 100) ^ "hundred" in
+      if remainder <> 0 then
+        num_str ^ "and" ^ to_string remainder
+      else
+        num_str
+    | _ -> invalid_arg "outside out of the range of [1, 1000]"
+  in
+
+  let rec count curr_num end_num accum =
+    if curr_num > end_num then
+      accum
+    else begin
+      let num_str = to_string curr_num in
+      count (curr_num + 1) end_num (accum + String.length num_str)
+    end
+  in
+  count 1 end_num 0
+;;
