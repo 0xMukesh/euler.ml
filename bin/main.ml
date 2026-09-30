@@ -1,1 +1,1 @@
-let () = Utils.print_int (Solutions.p_007 10_001)
+let () = Utils.print_int (Solutions.p_010 2_000_000)

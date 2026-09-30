@@ -83,7 +83,7 @@ let p_005 start_num end_num =
 
 let p_006 n =
   let sum = n * (n + 1) / 2 in
-  let square_of_sum = int_of_float (float_of_int sum ** 2.) in
+  let square_of_sum = sum * sum in
   let sum_of_square = n * (n + 1) * ((2 * n) + 1) / 6 in
   square_of_sum - sum_of_square
 ;;
@@ -100,4 +100,61 @@ let p_007 limit =
   match limit with
   | _ when limit < 1 -> failwith "limit must be atleast 1"
   | _ -> check 2 0 0
+;;
+
+let p_008 filename window_size =
+  let content = In_channel.with_open_text filename In_channel.input_all |> String.trim in
+  let rec next_chunk position =
+    if position + window_size > String.length content then
+      None
+    else
+      Some (String.sub content position window_size)
+  in
+  let product_of_digits s =
+    String.fold_left (fun product c -> product * (Char.code c - Char.code '0')) 1 s
+  in
+  let rec search position max_prod max_chunk =
+    match next_chunk position with
+    | Some chunk -> begin
+      let prod = product_of_digits chunk in
+      if prod > max_prod then
+        search (position + 1) prod chunk
+      else
+        search (position + 1) max_prod max_chunk
+      end
+    | None -> max_prod, max_chunk
+  in
+  search 0 0 ""
+;;
+
+let p_009 =
+  let rec search_a a =
+    if a >= 333 then
+      failwith "couldn't find a triplet"
+    else begin
+      let rec search_b b =
+        let c = 1000 - a - b in
+        if b >= c then
+          search_a (a + 1)
+        else if (a * a) + (b * b) = c * c then
+          a * b * c
+        else
+          search_b (b + 1)
+      in
+      search_b (a + 1)
+    end
+  in
+  search_a 1
+;;
+
+let p_010 limit =
+  let rec aux curr accum =
+    if curr > limit then
+      accum
+    else if Utils.is_prime curr then
+      aux (curr + 1) (accum + curr)
+    else
+      aux (curr + 1) accum
+  in
+  aux 1 0
 ;;
