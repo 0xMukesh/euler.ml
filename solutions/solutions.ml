@@ -1,13 +1,12 @@
 let p_001 =
   let rec aux curr ~accum ~limit =
-    let gen = aux (curr + 1) ~limit in
     match curr with
     | _ when curr >= limit -> accum
     | _ ->
       if curr mod 3 = 0 || curr mod 5 = 0 then
-        gen ~accum:(accum + curr)
+        aux (curr + 1) ~accum:(accum + curr) ~limit
       else
-        gen ~accum
+        aux (curr + 1) ~accum ~limit
   in
   aux 1 ~accum:0 ~limit:1000
 ;;
@@ -15,14 +14,13 @@ let p_001 =
 let p_002 =
   let rec aux a b ~accum ~limit =
     let next = a + b in
-    let gen = aux b next ~limit in
     match next with
     | _ when next >= limit -> accum
     | _ ->
       if next mod 2 = 0 then
-        gen ~accum:(accum + next)
+        aux b next ~accum:(accum + next) ~limit
       else
-        gen ~accum
+        aux b next ~accum ~limit
   in
   aux 1 1 ~accum:0 ~limit:4_000_000
 ;;
@@ -55,9 +53,9 @@ let p_004 num_max =
   in
   let advance (a, b) =
     if b = 1 then
-      a - 1, num_max
+      (a - 1, num_max)
     else
-      a, b - 1
+      (a, b - 1)
   in
   let rec search (a, b) ~max =
     let prod = a * b in
@@ -122,7 +120,7 @@ let p_008 filename window_size =
       else
         search (position + 1) max_prod max_chunk
       end
-    | None -> max_prod, max_chunk
+    | None -> (max_prod, max_chunk)
   in
   search 0 0 ""
 ;;
@@ -157,4 +155,60 @@ let p_010 limit =
       aux (curr + 1) accum
   in
   aux 1 0
+;;
+
+let p_011 filename =
+  let lines = In_channel.with_open_text filename In_channel.input_lines in
+  let transform_line s =
+    List.map (fun x -> int_of_string x) (String.split_on_char ' ' s) |> Array.of_list
+  in
+  let grid = List.map transform_line lines |> Array.of_list in
+
+  let n_rows = Array.length grid in
+  let n_cols = Array.length grid.(0) in
+  let window = 4 in
+  let directions = [ (0, 1); (1, 0); (1, 1); (1, -1) ] in
+
+  let rec product_at row col (row_step, col_step) =
+    let rec aux offset prod =
+      let r = row + (offset * row_step) in
+      let c = col + (offset * col_step) in
+      if offset >= window then
+        prod
+      else if r < 0 || r >= n_rows || c < 0 || c >= n_cols then
+        0
+      else
+        aux (offset + 1) (prod * grid.(r).(c))
+    in
+    aux 0 1
+  in
+
+  let advance (i, j) =
+    if i = n_rows - 1 then
+      None
+    else if j = n_cols - 1 then
+      Some (i + 1, 0)
+    else
+      Some (i, j + 1)
+  in
+
+  let rec search (i, j) best_prod best_info =
+    let best_prod, best_info =
+      List.fold_left
+        (fun (curr_max, curr_info) direction ->
+           let prod = product_at i j direction in
+           if prod > curr_max then
+             (prod, Some ((i, j), direction))
+           else
+             (curr_max, curr_info))
+        (best_prod, best_info)
+        directions
+    in
+
+    match advance (i, j) with
+    | None -> (best_prod, best_info)
+    | Some next_position -> search next_position best_prod best_info
+  in
+
+  search (0, 0) 0 None
 ;;
