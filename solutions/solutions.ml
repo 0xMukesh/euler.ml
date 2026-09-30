@@ -1,4 +1,4 @@
-let p_001 =
+let p_001 () =
   let rec aux curr ~accum ~limit =
     match curr with
     | _ when curr >= limit -> accum
@@ -8,10 +8,11 @@ let p_001 =
       else
         aux (curr + 1) ~accum ~limit
   in
+
   aux 1 ~accum:0 ~limit:1000
 ;;
 
-let p_002 =
+let p_002 () =
   let rec aux a b ~accum ~limit =
     let next = a + b in
     match next with
@@ -22,6 +23,7 @@ let p_002 =
       else
         aux b next ~accum ~limit
   in
+
   aux 1 1 ~accum:0 ~limit:4_000_000
 ;;
 
@@ -36,27 +38,32 @@ let p_003 num =
     else
       factor n (divisor + 1) factors
   in
+
   let result =
     if num < 2 then
       []
     else
       factor num 2 []
   in
+
   List.sort_uniq compare result
 ;;
 
-let p_004 num_max =
+let p_004 max_num =
   let reversed s = String.init (String.length s) (fun i -> s.[String.length s - 1 - i]) in
+
   let is_palindrome n =
     let str = string_of_int n in
     str = reversed str
   in
+
   let advance (a, b) =
     if b = 1 then
-      (a - 1, num_max)
+      (a - 1, max_num)
     else
       (a, b - 1)
   in
+
   let rec search (a, b) ~max =
     let prod = a * b in
     let next = advance (a, b) in
@@ -70,7 +77,8 @@ let p_004 num_max =
     else
       search next ~max
   in
-  search (num_max, num_max) ~max:0
+
+  search (max_num, max_num) ~max:0
 ;;
 
 let p_005 start_num end_num =
@@ -86,31 +94,35 @@ let p_006 n =
   square_of_sum - sum_of_square
 ;;
 
-let p_007 limit =
+let p_007 nth =
   let rec check d primes_found latest =
-    if primes_found = limit then
+    if primes_found = nth then
       latest
     else if Utils.is_prime d then
       check (d + 1) (primes_found + 1) d
     else
       check (d + 1) primes_found latest
   in
-  match limit with
-  | _ when limit < 1 -> failwith "limit must be atleast 1"
+
+  match nth with
+  | _ when nth < 1 -> failwith "nth must be at least 1"
   | _ -> check 2 0 0
 ;;
 
 let p_008 filename window_size =
   let content = In_channel.with_open_text filename In_channel.input_all |> String.trim in
+
   let rec next_chunk position =
     if position + window_size > String.length content then
       None
     else
       Some (String.sub content position window_size)
   in
+
   let product_of_digits s =
     String.fold_left (fun product c -> product * (Char.code c - Char.code '0')) 1 s
   in
+
   let rec search position max_prod max_chunk =
     match next_chunk position with
     | Some chunk -> begin
@@ -122,10 +134,11 @@ let p_008 filename window_size =
       end
     | None -> (max_prod, max_chunk)
   in
+
   search 0 0 ""
 ;;
 
-let p_009 =
+let p_009 () =
   let rec search_a a =
     if a >= 333 then
       failwith "couldn't find a triplet"
@@ -139,13 +152,17 @@ let p_009 =
         else
           search_b (b + 1)
       in
+
       search_b (a + 1)
     end
   in
+
   search_a 1
 ;;
 
-let p_010 limit =
+let p_010 () =
+  let limit = 2_000_000 in
+
   let rec aux curr accum =
     if curr > limit then
       accum
@@ -154,6 +171,7 @@ let p_010 limit =
     else
       aux (curr + 1) accum
   in
+
   aux 1 0
 ;;
 
@@ -211,4 +229,34 @@ let p_011 filename =
   in
 
   search (0, 0) 0 None
+;;
+
+let p_012 num_divisors =
+  let count_divisors n =
+    if n <= 0 then
+      invalid_arg "n must be positive";
+
+    let rec loop i count =
+      if i * i > n then
+        count
+      else if n mod i = 0 then
+        if i * i = n then
+          loop (i + 1) (count + 1)
+        else
+          loop (i + 1) (count + 2)
+      else
+        loop (i + 1) count
+    in
+    loop 1 0
+  in
+
+  let rec search i =
+    let triangle_number = i * (i + 1) / 2 in
+    if count_divisors triangle_number >= num_divisors then
+      triangle_number
+    else
+      search (i + 1)
+  in
+
+  search 1
 ;;
